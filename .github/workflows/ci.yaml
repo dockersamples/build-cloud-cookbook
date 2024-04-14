@@ -1,6 +1,14 @@
 name: Build and Push
 
 on:
+  workflow_call:
+    inputs:
+      builder_type:
+        required: true
+        type: string
+      platforms:
+        required: true
+        type: string
   workflow_dispatch:
     inputs:
       builder_type:
@@ -28,6 +36,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.builder_type }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,7 +44,7 @@ jobs:
       - name: Determine platforms to build
         id: determine_platforms
         run: |
-          case "${{ github.event.inputs.platforms }}" in
+          case "${{ inputs.platforms }}" in
             amd64)
               echo "Building for amd64"
               PLATFORMS="linux/amd64"
@@ -62,15 +71,15 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Set up QEMU
-        if: ${{ github.event.inputs.builder_type == 'local' }}
+        if: ${{ inputs.builder_type == 'local' }}
         uses: docker/setup-qemu-action@v3
 
       - name: Set up Docker Buildx (local)
-        if: ${{ github.event.inputs.builder_type == 'local' }}
+        if: ${{ inputs.builder_type == 'local' }}
         uses: docker/setup-buildx-action@v3
 
       - name: Set up Docker Buildx (cloud)
-        if: ${{ github.event.inputs.builder_type != 'local' }}
+        if: ${{ inputs.builder_type != 'local' }}
         uses: docker/setup-buildx-action@v3
         with:
             version: lab:latest

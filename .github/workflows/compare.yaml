@@ -1,0 +1,19 @@
+name: Compare Builders
+on:
+    workflow_dispatch:
+
+jobs:
+  build_local:
+    uses: ./.github/workflows/ci.yaml
+    secrets: inherit
+    with:
+      builder_type: local
+      platforms: multiplatform
+
+  build_cloud:
+    uses: ./.github/workflows/ci.yaml
+    secrets: inherit
+    with:
+      builder_type: cloud
+      platforms: multiplatform
+            
