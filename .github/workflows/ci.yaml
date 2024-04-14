@@ -1,0 +1,86 @@
+name: Build and Push
+
+on:
+  workflow_dispatch:
+    inputs:
+      builder_type:
+        type: choice
+        description: Builder type
+        default: cloud
+        options:
+          - local
+          - cloud
+      platforms:
+        type: choice
+        description: Platforms to build
+        default: multiplatform
+        options:
+          - multiplatform
+          - amd64
+          - arm64
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Determine platforms to build
+        id: determine_platforms
+        run: |
+          case "${{ github.event.inputs.platforms }}" in
+            amd64)
+              echo "Building for amd64"
+              PLATFORMS="linux/amd64"
+              ;;
+            arm64)
+              echo "Building for arm64"
+              PLATFORMS="linux/arm64"
+              ;;
+            multiplatform | "")
+              echo "Building for multiplatform"
+              PLATFORMS="linux/amd64,linux/arm64"
+              ;;
+            *)
+              echo "Invalid platform"
+              exit 1
+              ;;
+          esac
+          echo "platforms=${PLATFORMS}" >> $GITHUB_OUTPUT
+
+      - name: Login to Docker
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Set up QEMU
+        if: ${{ github.event.inputs.builder_type == 'local' }}
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx (local)
+        if: ${{ github.event.inputs.builder_type == 'local' }}
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set up Docker Buildx (cloud)
+        if: ${{ github.event.inputs.builder_type != 'local' }}
+        uses: docker/setup-buildx-action@v3
+        with:
+            version: lab:latest
+            driver: cloud
+            endpoint: docker/collab-bu
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: ${{ steps.determine_platforms.outputs.platforms }}
+          push: true
+          tags: ${{ vars.DOCKER_HUB_ACCOUNT }}/dbc-demo:latest
