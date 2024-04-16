@@ -86,7 +86,19 @@ jobs:
             driver: cloud
             endpoint: docker/collab-bu
 
-      - name: Build and push
+      - name: Build and push (local)
+        if: ${{ inputs.builder_type == 'local' }}
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: ${{ steps.determine_platforms.outputs.platforms }}
+          push: true
+          tags: ${{ vars.DOCKER_HUB_ACCOUNT }}/dbc-demo:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build and push (cloud)
+        if: ${{ inputs.builder_type != 'local' }}
         uses: docker/build-push-action@v5
         with:
           context: .
