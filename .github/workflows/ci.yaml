@@ -94,8 +94,8 @@ jobs:
           platforms: ${{ steps.determine_platforms.outputs.platforms }}
           push: true
           tags: ${{ vars.DOCKER_HUB_ACCOUNT }}/dbc-demo:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=registry,ref=${{ vars.DOCKER_HUB_ACCOUNT }}/dbc-demo:latest
+          cache-to: type=inline
 
       - name: Build and push (cloud)
         if: ${{ inputs.builder_type != 'local' }}
