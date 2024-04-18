@@ -4,14 +4,14 @@ on:
 
 jobs:
   build_local:
-    uses: ./.github/workflows/ci.yaml
+    uses: ./.github/workflows/build.yaml
     secrets: inherit
     with:
       builder_type: local
       platforms: linux/amd64,linux/arm64
 
   build_cloud:
-    uses: ./.github/workflows/ci.yaml
+    uses: ./.github/workflows/build.yaml
     secrets: inherit
     with:
       builder_type: cloud

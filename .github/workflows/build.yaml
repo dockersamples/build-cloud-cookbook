@@ -1,0 +1,49 @@
+name: Build and Push
+
+on:
+  workflow_call:
+    inputs:
+      builder_type:
+        required: true
+        type: string
+      platforms:
+        required: true
+        type: string
+  workflow_dispatch:
+    inputs:
+      builder_type:
+        type: choice
+        description: Builder type
+        default: cloud
+        options:
+          - local
+          - cloud
+      platforms:
+        type: choice
+        description: Platforms to build
+        default: multiplatform
+        options:
+          - linux/amd64,linux/arm64
+          - linux/amd64
+          - linux/arm64
+      cache:
+        type: boolean
+        description: Cache the build
+        default: true
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.builder_type }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build and push
+        uses: ./.github/actions/buildpush
+        with:
+          builder_type: ${{ inputs.builder_type }}
+          platforms: ${{ inputs.platforms }}
+          docker_username: ${{ vars.DOCKER_USERNAME }}
+          docker_password: ${{ secrets.DOCKER_PASSWORD }}
+          docker_hub_account: ${{ vars.DOCKER_HUB_ACCOUNT }}
+          cache: ${{ inputs.cache }}
