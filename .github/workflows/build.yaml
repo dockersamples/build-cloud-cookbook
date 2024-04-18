@@ -28,7 +28,7 @@ on:
           - linux/arm64
       cache:
         type: boolean
-        description: Cache the build
+        description: Use cache while building
         default: true
 jobs:
   build:
