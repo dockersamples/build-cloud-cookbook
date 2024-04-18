@@ -9,6 +9,10 @@ on:
       platforms:
         required: true
         type: string
+      no-cache:
+        required: false
+        type: boolean
+        default: false
   workflow_dispatch:
     inputs:
       builder_type:
