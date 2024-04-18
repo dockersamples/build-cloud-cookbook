@@ -12,7 +12,6 @@ inputs:
   cloud_builder:
     description: "The cloud builder endpoint"
     required: false
-    default: "docker/collab-bu"
   docker_username:
     description: "Docker Hub username"
     required: true
