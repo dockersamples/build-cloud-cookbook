@@ -22,10 +22,10 @@ inputs:
   docker_hub_account:
     description: "Docker Hub account to push the image to"
     required: true
-  cache:
-    description: "Cache the build"
+  no-cache:
+    description: "Disable cache during build"
     required: false
-    default: "true"
+    default: "false"
 runs:
   using: "composite"
   steps:
@@ -70,4 +70,4 @@ runs:
           platforms: ${{ inputs.platforms || 'linux/amd64,linux/arm64' }}
           push: true
           tags: ${{ inputs.docker_hub_account }}/dbc-demo:latest-cloud
-          cache: ${{ inputs.cache }}
+          no-cache: ${{ inputs.no-cache }}

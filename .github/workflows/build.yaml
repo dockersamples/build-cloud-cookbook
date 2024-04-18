@@ -26,10 +26,10 @@ on:
           - linux/amd64,linux/arm64
           - linux/amd64
           - linux/arm64
-      cache:
+      no-cache:
         type: boolean
-        description: Use cache while building
-        default: true
+        description: Disable cache during build
+        default: false
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -46,4 +46,4 @@ jobs:
           docker_username: ${{ vars.DOCKER_USERNAME }}
           docker_password: ${{ secrets.DOCKER_PASSWORD }}
           docker_hub_account: ${{ vars.DOCKER_HUB_ACCOUNT }}
-          cache: ${{ inputs.cache }}
+          no-cache: ${{ inputs.no-cache }}
