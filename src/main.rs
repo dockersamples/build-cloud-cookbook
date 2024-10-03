@@ -18,7 +18,7 @@ async fn main() {
 }
 
 async fn handler() -> Html<&'static str> {
-    Html("<h1>Hello, World!</h1>")
+    Html("<h1>Hello, World 2024-10-03!</h1>")
 }
 
 async fn shutdown_signal() {
