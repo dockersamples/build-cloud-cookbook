@@ -8,5 +8,5 @@ RUN --mount=type=cache,target=/usr/local/cargo/git \
 
 FROM debian:bookworm-slim
 COPY --from=builder /usr/local/cargo/bin/dbc-demo /usr/local/bin/dbc-demo
-ENV BIND_ADDR 0.0.0.0:3000
+ENV BIND_ADDR=0.0.0.0:3000
 CMD ["dbc-demo"]
